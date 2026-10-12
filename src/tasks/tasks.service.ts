@@ -2,7 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
 import { Task } from './entities/task.entity.js';
-import { TaskStatuses } from './entities/task.entity.js';
+import { TaskStatuses, PaginatedResult } from './entities/task.entity.js';
+import { QueryTasksDto } from './dto/query-tasks.dto.js';
 
 @Injectable()
 export class TasksService {
@@ -21,8 +22,41 @@ export class TasksService {
     return task;
   }
 
-  findAll(): Task[] {
-    return this.tasks;
+  findAll(query: QueryTasksDto): PaginatedResult<Task> {
+    const { status, search, page, limit, orderBy } = query;
+
+    let result = [...this.tasks];
+
+    if (status) {
+      result = result.filter((task) => task.status === status);
+    }
+
+    if (search) {
+      result = result.filter((task) =>
+        task.title.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
+
+
+    result.sort((a, b) =>
+      orderBy === 'asc'
+        ? a.createdAt.getTime() - b.createdAt.getTime()
+        : b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+
+    const total = result.length;
+    const start = (page - 1) * limit;
+    const data = result.slice(start, start + limit);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   findOne(id: number): Task {

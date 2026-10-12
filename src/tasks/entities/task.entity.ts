@@ -11,3 +11,13 @@ export class Task {
   status: TaskStatuses;
   createdAt: Date;
 }
+
+export interface PaginatedResult<T> {
+  data: T[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
