@@ -3,6 +3,7 @@ import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { TasksModule } from './tasks/tasks.module.js';
+import { DatabaseModule } from './database/database.module.js';
 
 process.loadEnvFile();
 
@@ -17,6 +18,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: process.env.OBSERVE_APP_SECRET!,
       serviceId: 'todo-nest',
     }),
+    DatabaseModule,
     TasksModule,
   ],
   controllers: [AppController],

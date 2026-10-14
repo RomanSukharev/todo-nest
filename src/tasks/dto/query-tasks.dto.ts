@@ -30,10 +30,10 @@ export class QueryTasksDto {
   page: number = 1;
 
   @ApiPropertyOptional({ default: 10, minimum: 1, maximum: 100 })
-  @IsOptional()
+  @IsOptional() // можно не передавать вообще
   @Type(() => Number)
-  @IsInt()
-  @Min(1)
+  @IsInt() // но если передали, это должно быть целое число
+  @Min(1) // и не меньше 1
   @Max(100)
   limit: number = 10;
 
